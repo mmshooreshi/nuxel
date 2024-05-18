@@ -8,7 +8,7 @@ BUILD_DIR = .output
 .DEFAULT_GOAL := help
 
 # Include other Makefiles
-include docker.mk
+# include docker.mk
 
 # Help target
 .PHONY: help
