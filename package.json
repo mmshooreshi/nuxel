@@ -4,23 +4,24 @@
   "description": "Event streaming monitoring tool using Nuxt 3",
   "private": true,
   "scripts": {
-    "build": "nuxi build",
-    "dev": "nuxi dev",
-    "generate": "nuxi generate",
-    "preview": "nuxi preview",
-    "postinstall": "nuxi prepare"
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "nuxt": "latest",
-    "axios": "^0.21.1"
+    "axios": "^0.21.1",
+    "nuxi": "^3.11.1",
+    "nuxt": "latest"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
     "@nuxt/ui": "^2.13.0",
     "nodemon": "^2.0.7",
+    "pnpm": "^6.0.0",
     "webpack": "^5.36.2",
-    "webpack-cli": "^4.6.0",
-    "pnpm": "^6.0.0"
+    "webpack-cli": "^4.6.0"
   },
   "pnpm": {
     "hooks": {

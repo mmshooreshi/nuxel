@@ -1,20 +1,37 @@
+# Development stage
 FROM node:18-alpine AS base
 
 WORKDIR /app
 
+# Install dependencies required for the build
 RUN apk add --no-cache libc6-compat
+
+# Install pnpm
 RUN npm install -g pnpm
 
-COPY pnpm-lock.yaml package.json ./
-# RUN pnpm fetch
+# Create a non-root user and group
+RUN addgroup -S nuxtgroup && adduser -S nuxtuser -G nuxtgroup
 
+# Copy package.json and pnpm-lock.yaml first to leverage Docker cache
+COPY package.json pnpm-lock.yaml ./
+
+# Fetch dependencies
+RUN pnpm fetch
+
+# Copy the rest of the application code
 COPY . .
-RUN pnpm install
 
+# Install dependencies offline
+RUN pnpm install -r --offline
 
+# Set the correct permissions for the /app directory
+RUN chown -R nuxtuser:nuxtgroup /app
+
+# Expose the development server port
 EXPOSE 3000
 
-RUN addgroup -S nuxtgroup && adduser -S nuxtuser -G nuxtgroup
+# Switch to the non-root user
 USER nuxtuser
 
+# Default command to run the development server
 CMD ["pnpm", "run", "dev"]
