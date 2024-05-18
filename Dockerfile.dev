@@ -1,0 +1,20 @@
+FROM node:18-alpine AS base
+
+WORKDIR /app
+
+RUN apk add --no-cache libc6-compat
+RUN npm install -g pnpm
+
+COPY pnpm-lock.yaml package.json ./
+# RUN pnpm fetch
+
+COPY . .
+RUN pnpm install
+
+
+EXPOSE 3000
+
+RUN addgroup -S nuxtgroup && adduser -S nuxtuser -G nuxtgroup
+USER nuxtuser
+
+CMD ["pnpm", "run", "dev"]
