@@ -1,20 +1,6 @@
 version: '3.8'
 services:
-  # nuxt-app:
-  #   build:
-  #     context: .
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "3000:3000"
-  #   environment:
-  #     NODE_ENV: production
-  #   volumes:
-  #     - app_data:/app:delegated
-  #   tmpfs:
-  #     - /tmp
-  #   restart: always
-
-  nuxt-app-dev:
+  nuxt-app:
     build:
       context: .
       dockerfile: Dockerfile.dev
@@ -22,11 +8,11 @@ services:
       - "3001:3000"
     environment:
       NODE_ENV: development
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
     volumes:
-      - app_data:/app:delegated
-    tmpfs:
-      - /tmp
-    restart: always
-
-volumes:
-  app_data:
+      - .:/app
+      - /app/node_modules

@@ -1,21 +1,40 @@
-FROM node:18-alpine
+# Stage 1: Build the application
+FROM node:18-alpine AS builder
 
+# Set working directory
 WORKDIR /app
 
-RUN apk add --no-cache libc6-compat && \
-    npm install -g pnpm && \
-    addgroup -S nuxtgroup && \
-    adduser -S nuxtuser -G nuxtgroup
+# Install pnpm
+RUN npm install -g pnpm
 
-COPY package.json pnpm-lock.yaml ./
-# RUN pnpm fetch
+# Install dependencies
+COPY pnpm-lock.yaml ./
+COPY package.json ./
+RUN pnpm install
 
+# Copy the rest of the application code
 COPY . .
 
-RUN pnpm install 
-    # chown -R nuxtuser:nuxtgroup /app
+# Build the application
+RUN pnpm build
 
-# USER nuxtuser
+# Stage 2: Create the production image
+FROM node:18-alpine
+
+# Set working directory
+WORKDIR /app
+
+# Install pnpm
+RUN npm install -g pnpm
+
+# Copy the built application from the builder stage
+COPY --from=builder /app/.output /app/.output
+
+# Install production dependencies
+COPY pnpm-lock.yaml ./
+COPY package.json ./
+RUN pnpm install
+
 
 EXPOSE 3000
 CMD ["pnpm", "run", "dev"]
