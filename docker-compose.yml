@@ -5,12 +5,11 @@ services:
   #     context: .
   #     dockerfile: Dockerfile
   #   ports:
-  #     - "3001:3000"
+  #     - "3000:3000"
   #   environment:
   #     NODE_ENV: production
   #   volumes:
-  #     - .:/app:delegated
-  #     - /app/node_modules
+  #     - app_data:/app:delegated
   #   tmpfs:
   #     - /tmp
   #   restart: always
@@ -28,13 +27,6 @@ services:
     tmpfs:
       - /tmp
     restart: always
-    networks:
-      - inception
 
 volumes:
   app_data:
-
-
-networks:
-  inception:
-    external: true
