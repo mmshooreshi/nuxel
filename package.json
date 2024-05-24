@@ -12,8 +12,10 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
+    "dayjs": "^1.11.11",
     "nuxi": "^3.11.1",
-    "nuxt": "latest"
+    "nuxt": "latest",
+    "vue-json-pretty": "^2.4.0"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",

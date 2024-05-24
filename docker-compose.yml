@@ -5,14 +5,14 @@ services:
       context: .
       dockerfile: Dockerfile.dev
     ports:
-      - "3001:3000"
+      - "3003:3000"
     environment:
       NODE_ENV: development
-    deploy:
-      resources:
-        limits:
-          cpus: '0.5'
-          memory: 512M
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '0.5'
+    #       memory: 512M
     volumes:
       - .:/app
       - /app/node_modules
