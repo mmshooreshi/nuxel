@@ -11,11 +11,15 @@
     "postinstall": "nuxi prepare"
   },
   "dependencies": {
+    "@codemirror/language": "^6.10.1",
     "axios": "^0.21.1",
     "dayjs": "^1.11.11",
+    "json-editor-vue": "^0.15.1",
     "nuxi": "^3.11.1",
     "nuxt": "latest",
-    "vue-json-pretty": "^2.4.0"
+    "openai": "^4.47.2",
+    "vue-json-pretty": "^2.4.0",
+    "vue3-json-editor": "^1.1.5"
   },
   "devDependencies": {
     "@nuxt/devtools": "latest",
