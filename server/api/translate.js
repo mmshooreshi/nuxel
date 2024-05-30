@@ -13,14 +13,16 @@ const OpenAIStream = async ({
   });
 
   try {
+    let example={"language":"python","rawcode":"a = 5\nb = 3\nsum = a + b\na, b = b, a\nprint(f\"Sum: {sum}, After Swap: a={a}, b={b}\")","sections":[{"description":"Define Variables","code":"a = 5\nb = 3"},{"description":"Calculate Sum","code":"sum = a + b"},{"description":"Swap Values","code":"a, b = b, a"},{"description":"Print Result","code":"print(f\"Sum: {sum}, After Swap: a={a}, b={b}\")"}]}
+    // example = {}
     const messages = [
       {
         role: 'system',
-        content: `Translate the following ${inputLanguage} code to ${outputLanguage}\n\nONLY WRITE PURE CODE WITH NO EXTRA TEXTS. YOUR RESPONSE WILL GO DIRECTLY INTO COMPILER.`
+        content: `Translate the following ${inputLanguage} code to ${outputLanguage}\n\nONLY WRITE PURE CODE WITH NO EXTRA TEXTS. YOUR RESPONSE MUST BE A VALID JSON, like this:  \`\`\`json\n${JSON.stringify(example)}\n\`\`\`. DO NOT ADD ANY OTHER KEYS THAN THESE.`
       },
       {
         role: 'user',
-        content: `inputCode: ${inputCode} \n\nuser guidance and request: ${inputPrompt} \n\n When your code get rendered it must get compiled into this json: ${JSON.stringify(json2validate)}`
+        content: `inputCode: ${inputCode} \n\nuser guidance and request: ${inputPrompt} \n\n`
       }
     ];
     console.log(messages);
@@ -30,6 +32,7 @@ const OpenAIStream = async ({
       temperature,
       max_tokens: 4000,
       messages,
+      response_format: {"type": "json_object"},
       stream: true,
     }, { signal });
 

@@ -32,11 +32,17 @@
         </div>
         <div class="flex min-h-[300px] flex-col justify-center space-y-2 mt-8 sm:mt-0 sm:w-2/4">
           <LanguageSelect :language="outputLanguage" @change="setOutputLanguage" />
-          <TextBlock v-model:text="outputCode" :editable="false" />
+          <TextBlockParsed v-model:outputCode="outputCode" :editable="false" />
+          <!-- <TextBlock v-model:text="outputCode" :editable="false" /> -->
+
         </div>
       </div>
   
       <div class="flex w-full justify-center h-28">
+        <!-- <OutputCodeDisplay :outputCode="outputCode" /> -->
+        <OutputCodeDisplay @click="copySelected"  v-model:outputCode="outputCode" />
+        <!-- <button @click="copySelected" class="bg-green-500 text-white text-sm rounded">Copy</button> -->
+
         <TextBlock v-model:text="inputPrompt" :editable="true" />
       </div>
   
@@ -69,19 +75,20 @@ import APIKeyInput from '~/components/APIKeyInput.vue';
 import LanguageSelect from '~/components/LanguageSelect.vue';
 import ModelSelect from '~/components/ModelSelect.vue';
 import TextBlock from '~/components/TextBlock.vue';
+import TextBlockParsed from '~/components/TextBlockParsed.vue';
 import { Vue3JsonEditor } from 'vue3-json-editor'
 import 'vanilla-jsoneditor/themes/jse-theme-dark.css'
-
+import OutputCodeDisplay from '~/components/OutputCodeDisplay.vue';
 
 
 const json2validate = ref({ "foo": "value1", "bar": "value2" })
 const inputCode = ref('Enter ECHO here ;D');
 const inputPrompt = ref('Write your Input here...')
-const outputCode = ref('Your INCEPTION outputs...');
+const outputCode = ref('{"language": "","rawcode": "","sections": [{},{},{}]}');
 const inputLanguage = ref('Echo');
-const outputLanguage = ref('Inception3');
-const model = ref('gpt-3.5-turbo');
-const temperature = ref(1);
+const outputLanguage = ref('Python');
+const model = ref('gpt-4o');
+const temperature = ref(0.7);
 const loading = ref(false);
 const hasTranslated = ref(false);
 const apiKey = ref('');
@@ -100,7 +107,57 @@ onMounted(() => {
     });
   });
 
-const handleTranslate = async () => {
+
+  const copySelected = () => {
+      if (!outputCode.value) {
+        alert('No sections to copy');
+        return;
+      }
+
+      try {
+        const parsedOutput = JSON.parse(outputCode.value);
+        console.log(parsedOutput)
+        const selectedSections = parsedOutput.sections.filter(section => section.selected);
+        const removedSections = parsedOutput.sections.filter(section => section.removed);
+
+        let textToCopy = '';
+        textToCopy += 'This is the code you wrote:\n\`\`\`\n';
+        textToCopy += parsedOutput.rawcode+`\n\`\`\`\n\n`
+
+        if (selectedSections.length > 0) {
+          textToCopy += '\nSections of the code i liked:\n\`\`\`\n';
+          selectedSections.forEach(section => {
+            textToCopy += `${section.code}\n`;
+          });
+          textToCopy += `\`\`\``
+        }
+
+        if (removedSections.length > 0) {
+          textToCopy += '\nSections of the code i didn\'t like:\n\`\`\`\n';
+          removedSections.forEach(section => {
+            textToCopy += `${section.code}\n`;
+          });
+          textToCopy += `\`\`\``
+        }
+
+        navigator.clipboard.writeText(textToCopy)
+          .then(() => {
+            console.log("textToCopy",textToCopy)
+            console.log("parsedOutput",parsedOutput)
+            console.log("selectedSections",selectedSections)
+            console.log("removedSections",removedSections)
+            // alert('Copied to clipboard');
+          })
+          .catch(err => {
+            console.error('Failed to copy: ', err);
+          });
+      } catch (error) {
+        console.error('Failed to parse outputCode', error);
+      }
+    };
+
+
+    const handleTranslate = async () => {
     const maxCodeLength = model.value === 'gpt-3.5-turbo' ? 6000 : 12000;
 
     if (!apiKey.value) {
